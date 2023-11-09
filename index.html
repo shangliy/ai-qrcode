@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,33 +9,68 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         header {
             text-align: center;
             background-color: #333;
             color: #fff;
             padding: 20px;
         }
+
         h1 {
             margin: 0;
         }
+
         .container {
-            column-count: 3; /* 列数 */
-            column-gap: 10px; /* 列之间的间隔 */
+            column-count: 3;
+            /* 列数 */
+            column-gap: 10px;
+            /* 列之间的间隔 */
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .photo {
-            margin: 0 0 10px; /* 图片之间的间隔 */
+            margin: 0 0 10px;
+            /* 图片之间的间隔 */
             display: inline-block;
-            break-inside: avoid; /* 防止图片跨列 */
+            break-inside: avoid;
+            /* 防止图片跨列 */
         }
+
         .photo img {
             width: 100%;
             display: block;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <h1>AI-Generated QR Code Portfolio</h1>
@@ -43,35 +79,69 @@
     <div class="container" id="photo-container">
         <!-- JavaScript 将在此处动态加载图片 -->
     </div>
+    <div class="modal" id="myModal">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
     <script>
-        // 在此处使用 JavaScript 动态加载本地图片
-        const photoContainer = document.getElementById("photo-container");
+        // 获取所有图片文件的相对路径
+        const photos = [];
 
-        // 图片文件的相对路径
-        const photos = [
-            "images/photo1.png",
-            "images/photo2.png",
-            "images/photo3.png",
-            "images/photo4.png",
-            "images/photo5.png",
-            "images/photo6.png",
-            "images/photo7.png",
-            "images/photo8.png",
-            "images/photo9.png",
-            // 添加更多的图片
-        ];
+        // 异步加载图片
+        async function loadImages() {
+            const response = await fetch('images'); // assuming 'images' is your folder path
+            const data = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, 'text/html');
+            
+            // 获取所有图片文件的相对路径
+            const imgElements = doc.querySelectorAll('img');
+            imgElements.forEach(img => {
+                const src = img.getAttribute('src');
+                photos.push(src);
+            });
 
-        photos.forEach(photo => {
-            const photoDiv = document.createElement("div");
-            photoDiv.classList.add("photo");
+            // 调用加载图片的函数
+            loadPhotos();
+        }
 
-            const img = document.createElement("img");
-            img.src = photo;
-            img.alt = "Photo";
+        // 在页面加载完成后调用加载图片的函数
+        window.addEventListener('load', loadImages);
 
-            photoDiv.appendChild(img);
-            photoContainer.appendChild(photoDiv);
-        });
+        // 加载图片的函数
+        function loadPhotos() {
+            const photoContainer = document.getElementById("photo-container");
+
+            photos.forEach(photo => {
+                const photoDiv = document.createElement("div");
+                photoDiv.classList.add("photo");
+
+                const img = document.createElement("img");
+                img.src = photo;
+                img.alt = "Photo";
+
+                // 为每张图片添加点击事件
+                img.addEventListener('click', function () {
+                    const modal = document.getElementById('myModal');
+                    const modalContent = document.getElementById('modalContent');
+
+                    modalContent.innerHTML = ""; // 清空modal内容
+
+                    // 创建图片元素，并设置其src属性
+                    const modalImg = document.createElement('img');
+                    modalImg.src = this.src;
+
+                    // 将图片元素添加到modal中
+                    modalContent.appendChild(modalImg);
+
+                    // 显示modal
+                    modal.style.display = 'block';
+                });
+
+                photoDiv.appendChild(img);
+                photoContainer.appendChild(photoDiv);
+            });
+        }
     </script>
 </body>
+
 </html>
