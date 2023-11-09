@@ -83,64 +83,67 @@
         <div class="modal-content" id="modalContent"></div>
     </div>
     <script>
-        // 获取所有图片文件的相对路径
-        const photos = [];
+        // 在此处使用 JavaScript 动态加载本地图片
+        const photoContainer = document.getElementById("photo-container");
 
-        // 异步加载图片
-        async function loadImages() {
-            const response = await fetch('images'); // assuming 'images' is your folder path
-            const data = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(data, 'text/html');
-            
-            // 获取所有图片文件的相对路径
-            const imgElements = doc.querySelectorAll('img');
-            imgElements.forEach(img => {
-                const src = img.getAttribute('src');
-                photos.push(src);
+        // 图片文件的相对路径
+        const photos = [
+            "images/photo1.png",
+            "images/photo2.png",
+            "images/photo3.png",
+            "images/photo4.png",
+            "images/photo5.png",
+            "images/photo6.png",
+            "images/photo7.png",
+            "images/photo8.png",
+            "images/photo9.png",
+            "images/photo10.png",
+            "images/photo11.png",
+            "images/photo12.png",
+            "images/photo13.png",
+            "images/photo14.png",
+            "images/photo15.png",
+            "images/photo16.png",
+            // 添加更多的图片
+        ];
+
+        photos.forEach(photo => {
+            const photoDiv = document.createElement("div");
+            photoDiv.classList.add("photo");
+
+            const img = document.createElement("img");
+            img.src = photo;
+            img.alt = "Photo";
+
+            // 为每张图片添加点击事件
+            img.addEventListener('click', function () {
+                const modal = document.getElementById('myModal');
+                const modalContent = document.getElementById('modalContent');
+                
+                modalContent.innerHTML = ""; // 清空modal内容
+
+                // 创建图片元素，并设置其src属性
+                const modalImg = document.createElement('img');
+                modalImg.src = this.src;
+
+                // 将图片元素添加到modal中
+                modalContent.appendChild(modalImg);
+
+                // 显示modal
+                modal.style.display = 'block';
             });
 
-            // 调用加载图片的函数
-            loadPhotos();
-        }
+            photoDiv.appendChild(img);
+            photoContainer.appendChild(photoDiv);
+        });
 
-        // 在页面加载完成后调用加载图片的函数
-        window.addEventListener('load', loadImages);
+        // 获取modal元素
+        const modal = document.getElementById('myModal');
 
-        // 加载图片的函数
-        function loadPhotos() {
-            const photoContainer = document.getElementById("photo-container");
-
-            photos.forEach(photo => {
-                const photoDiv = document.createElement("div");
-                photoDiv.classList.add("photo");
-
-                const img = document.createElement("img");
-                img.src = photo;
-                img.alt = "Photo";
-
-                // 为每张图片添加点击事件
-                img.addEventListener('click', function () {
-                    const modal = document.getElementById('myModal');
-                    const modalContent = document.getElementById('modalContent');
-
-                    modalContent.innerHTML = ""; // 清空modal内容
-
-                    // 创建图片元素，并设置其src属性
-                    const modalImg = document.createElement('img');
-                    modalImg.src = this.src;
-
-                    // 将图片元素添加到modal中
-                    modalContent.appendChild(modalImg);
-
-                    // 显示modal
-                    modal.style.display = 'block';
-                });
-
-                photoDiv.appendChild(img);
-                photoContainer.appendChild(photoDiv);
-            });
-        }
+        // 点击modal时隐藏它
+        modal.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
     </script>
 </body>
 
